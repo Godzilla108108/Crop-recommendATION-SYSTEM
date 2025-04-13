@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Montserrat:wght@500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --light-green: #66BB6A;
+            --dark-green: #1B5E20;
+            --soil-brown: #8D6E63;
+            --sun-yellow: #FFC107;
+            --sky-blue: #4FC3F7;
+            --harvest-orange: #FF9800;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('crop2(1)(1).png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 420px;
+            text-align: center;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--light-green), var(--primary-green), var(--dark-green));
+        }
+
+        h1 {
+            color: var(--primary-green);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+        }
+
+        p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--dark-green);
+            text-align: left;
+            font-size: 14px;
+        }
+
+        input, .range-input {
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus {
+            border-color: var(--light-green);
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.3);
+        }
+
+        .range-container {
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .range-input {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 4px;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .range-input::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: var(--dark-green);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--soil-brown);
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 14px;
+            border: none;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, var(--harvest-orange), #F57C00);
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            font-size: 18px;
+            display: none;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #result.show {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #result::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+
+        #result.show::before {
+            animation: shine 1.5s;
+        }
+
+        @keyframes shine {
+            100% { transform: translateX(100%); }
+        }
+
+        .crop-icon {
+            margin-right: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .leaf-decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            color: var(--light-green);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .leaf-1 {
+            top: 10px;
+            left: 10px;
+            transform: rotate(-30deg);
+        }
+        
+        .leaf-2 {
+            bottom: 10px;
+            right: 10px;
+            transform: rotate(120deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class="fas fa-leaf leaf-decoration leaf-1"></i>
+        <i class="fas fa-leaf leaf-decoration leaf-2"></i>
+
+        <h1><i class="fas fa-seedling crop-icon"></i> Crop Recommendation System</h1>
+        <p>Enter soil and weather parameters to get the best crop recommendations for your farm.</p>
+        
+        <form id="cropForm">
+            <div class="input-group">
+                <label for="nitrogen"><i class="fas fa-flask"></i> Nitrogen Level (N):</label>
+                <input type="number" id="nitrogen" required>
+                <div class="range-container">
+                    <input type="range" id="nitrogenRange" class="range-input" min="0" max="100" step="1" value="30">
+                    <div class="range-labels">
+                        <span>0</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="phosphorus"><i class="fas fa-flask"></i> Phosphorus Level (P):</label>
+                <input type="number" id="phosphorus" required>
+                <div class="range-container">
+                    <input type="range" id="phosphorusRange" class="range-input" min="0" max="100" step="1" value="70">
+                    <div class="range-labels">
+                        <span>0</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="potassium"><i class="fas fa-flask"></i> Potassium Level (K):</label>
+                <input type="number" id="potassium" required>
+                <div class="range-container">
+                    <input type="range" id="potassiumRange" class="range-input" min="0" max="100" step="1" value="50">
+                    <div class="range-labels">
+                        <span>0</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="temperature"><i class="fas fa-thermometer-half"></i> Temperature (°C):</label>
+                <input type="number" id="temperature" step="0.1" required>
+                <div class="range-container">
+                    <input type="range" id="temperatureRange" class="range-input" min="10" max="40" step="0.1" value="25">
+                    <div class="range-labels">
+                        <span>10°C</span>
+                        <span>40°C</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="humidity"><i class="fas fa-tint"></i> Humidity (%):</label>
+                <input type="number" id="humidity" step="0.1" required>
+                <div class="range-container">
+                    <input type="range" id="humidityRange" class="range-input" min="0" max="100" step="1" value="75">
+                    <div class="range-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="ph"><i class="fas fa-vial"></i> Soil pH Level:</label>
+                <input type="number" id="ph" step="0.1" required>
+                <div class="range-container">
+                    <input type="range" id="phRange" class="range-input" min="4" max="9" step="0.1" value="6.5">
+                    <div class="range-labels">
+                        <span>4.0</span>
+                        <span>9.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="rainfall"><i class="fas fa-cloud-rain"></i> Rainfall (mm):</label>
+                <input type="number" id="rainfall" required>
+                <div class="range-container">
+                    <input type="range" id="rainfallRange" class="range-input" min="0" max="300" step="10" value="100">
+                    <div class="range-labels">
+                        <span>0mm</span>
+                        <span>300mm</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit"><i class="fas fa-search"></i> Get Recommendation</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Sync range sliders with number inputs
+        function syncRangeWithNumber(rangeId, numberId) {
+            const range = document.getElementById(rangeId);
+            const number = document.getElementById(numberId);
+
+            range.addEventListener("input", () => {
+                number.value = range.value;
+            });
+
+            number.addEventListener("input", () => {
+                if (number.value > range.max) number.value = range.max;
+                if (number.value < range.min) number.value = range.min;
+                range.value = number.value;
+            });
+
+            // Initialize number input with range value
+            number.value = range.value;
+        }
+
+        // Synchronize all ranges
+        const syncPairs = [
+            ["nitrogenRange", "nitrogen"],
+            ["phosphorusRange", "phosphorus"],
+            ["potassiumRange", "potassium"],
+            ["temperatureRange", "temperature"],
+            ["humidityRange", "humidity"],
+            ["phRange", "ph"],
+            ["rainfallRange", "rainfall"]
+        ];
+
+        syncPairs.forEach(pair => syncRangeWithNumber(pair[0], pair[1]));
+
+        // Crop database with parameters
+        const cropData = {
+            "Rice": {
+                "N": {min: 25, max: 35},
+                "P": {min: 60, max: 80},
+                "K": {min: 5, max: 7},
+                "temp": {min: 22, max: 28},
+                "humidity": {min: 75, max: 85},
+                "ph": {min: 5.0, max: 6.5},
+                "rainfall": {min: 120, max: 180},
+                "icon": "fa-rice"
+            },
+            "Wheat": {
+                "N": {min: 15, max: 25},
+                "P": {min: 40, max: 60},
+                "K": {min: 5.5, max: 7.5},
+                "temp": {min: 18, max: 22},
+                "humidity": {min: 55, max: 65},
+                "ph": {min: 6.0, max: 7.0},
+                "rainfall": {min: 80, max: 120},
+                "icon": "fa-wheat-awn"
+            },
+            "Maize": {
+                "N": {min: 20, max: 30},
+                "P": {min: 55, max: 65},
+                "K": {min: 5.5, max: 6.5},
+                "temp": {min: 25, max: 30},
+                "humidity": {min: 65, max: 75},
+                "ph": {min: 5.5, max: 6.5},
+                "rainfall": {min: 70, max: 90},
+                "icon": "fa-corn"
+            },
+            "Cotton": {
+                "N": {min: 25, max: 30},
+                "P": {min: 35, max: 45},
+                "K": {min: 7.0, max: 8.0},
+                "temp": {min: 28, max: 32},
+                "humidity": {min: 45, max: 55},
+                "ph": {min: 7.0, max: 8.0},
+                "rainfall": {min: 70, max: 90},
+                "icon": "fa-cotton-bureau"
+            },
+            "Tea": {
+                "N": {min: 15, max: 20},
+                "P": {min: 80, max: 90},
+                "K": {min: 5.0, max: 6.0},
+                "temp": {min: 16, max: 20},
+                "humidity": {min: 85, max: 95},
+                "ph": {min: 5.0, max: 6.0},
+                "rainfall": {min: 110, max: 130},
+                "icon": "fa-mug-hot"
+            },
+            "Sugarcane": {
+                "N": {min: 23, max: 28},
+                "P": {min: 70, max: 80},
+                "K": {min: 6.0, max: 7.0},
+                "temp": {min: 26, max: 30},
+                "humidity": {min: 80, max: 90},
+                "ph": {min: 5.5, max: 6.5},
+                "rainfall": {min: 180, max: 220},
+                "icon": "fa-candy-cane"
+            },
+            "Soybean": {
+                "N": {min: 20, max: 24},
+                "P": {min: 60, max: 70},
+                "K": {min: 5.5, max: 6.5},
+                "temp": {min: 20, max: 24},
+                "humidity": {min: 60, max: 70},
+                "ph": {min: 5.8, max: 6.2},
+                "rainfall": {min: 80, max: 100},
+                "icon": "fa-seedling"
+            },
+            "Tomato": {
+                "N": {min: 18, max: 22},
+                "P": {min: 50, max: 60},
+                "K": {min: 5.5, max: 6.0},
+                "temp": {min: 23, max: 27},
+                "humidity": {min: 65, max: 75},
+                "ph": {min: 5.5, max: 6.0},
+                "rainfall": {min: 40, max: 60},
+                "icon": "fa-apple-alt"
+            },
+            "Potato": {
+                "N": {min: 13, max: 17},
+                "P": {min: 55, max: 65},
+                "K": {min: 5.0, max: 6.0},
+                "temp": {min: 13, max: 17},
+                "humidity": {min: 70, max: 80},
+                "ph": {min: 5.0, max: 6.0},
+                "rainfall": {min: 60, max: 80},
+                "icon": "fa-potato"
+            },
+            "Barley": {
+                "N": {min: 16, max: 20},
+                "P": {min: 40, max: 50},
+                "K": {min: 5.5, max: 6.0},
+                "temp": {min: 20, max: 24},
+                "humidity": {min: 50, max: 60},
+                "ph": {min: 6.0, max: 6.5},
+                "rainfall": {min: 80, max: 100},
+                "icon": "fa-beer"
+            }
+        };
+
+        document.getElementById("cropForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Get all input values
+            const nitrogen = parseFloat(document.getElementById("nitrogen").value);
+            const phosphorus = parseFloat(document.getElementById("phosphorus").value);
+            const potassium = parseFloat(document.getElementById("potassium").value);
+            const temperature = parseFloat(document.getElementById("temperature").value);
+            const humidity = parseFloat(document.getElementById("humidity").value);
+            const ph = parseFloat(document.getElementById("ph").value);
+            const rainfall = parseFloat(document.getElementById("rainfall").value);
+
+            // Calculate suitability score for each crop
+            const cropsWithScores = Object.entries(cropData).map(([name, reqs]) => {
+                let score = 0;
+                
+                // Check each parameter and add to score if within range
+                if (nitrogen >= reqs.N.min && nitrogen <= reqs.N.max) score++;
+                if (phosphorus >= reqs.P.min && phosphorus <= reqs.P.max) score++;
+                if (potassium >= reqs.K.min && potassium <= reqs.K.max) score++;
+                if (temperature >= reqs.temp.min && temperature <= reqs.temp.max) score++;
+                if (humidity >= reqs.humidity.min && humidity <= reqs.humidity.max) score++;
+                if (ph >= reqs.ph.min && ph <= reqs.ph.max) score++;
+                if (rainfall >= reqs.rainfall.min && rainfall <= reqs.rainfall.max) score++;
+
+                return { name, score, icon: reqs.icon };
+            });
+
+            // Sort crops by score (highest first)
+            cropsWithScores.sort((a, b) => b.score - a.score);
+
+            // Get the top 3 crops
+            const topCrops = cropsWithScores.slice(0, 3);
+
+            // Prepare result message
+            const resultDiv = document.getElementById("result");
+            let resultHTML = '';
+
+            if (topCrops[0].score > 0) {
+                resultHTML = '<h3>Recommended Crops:</h3>';
+
+                topCrops.forEach((crop, index) => {
+                    if (crop.score > 0) {
+                        const stars = '★'.repeat(crop.score) + '☆'.repeat(7 - crop.score);
+                        resultHTML += `
+                            <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                                <i class="fas ${crop.icon}" style="margin-right: 10px;"></i>
+                                <strong>${index + 1}. ${crop.name}</strong>
+                                <div style="font-size: 14px; margin-top: 5px;">Suitability: ${stars}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                resultHTML += '<p style="font-size: 14px; margin-top: 10px;">Based on your input parameters</p>';
+            } else {
+                resultHTML = '<strong>No suitable crops found.</strong><br>Try adjusting your parameters for better recommendations.';
+            }
+
+            resultDiv.innerHTML = resultHTML;
+
+            // Show result with animation
+            resultDiv.classList.remove("show");
+            setTimeout(() => {
+                resultDiv.classList.add("show");
+            }, 10);
+
+            // Scroll to result
+            setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 500);
+        });
+    </script>
+</body>
+</html>
